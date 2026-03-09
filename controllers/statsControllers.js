@@ -1,33 +1,42 @@
-const Client = require("../models/Client");
 const Invoice = require("../models/Invoice");
 const Payment = require("../models/Payment");
 
-exports.getStats = async (req, res) => {
+exports.getStats = async (req, res, next) => {
   try {
-    const totalClients = await Client.countDocuments();
-
     const totalInvoices = await Invoice.countDocuments();
-
-    const paidInvoices = await Invoice.countDocuments({
-      status: "paid",
-    });
-
     const unpaidInvoices = await Invoice.countDocuments({
-      status: "unpaid",
+      status: { $in: ["en_attente", "en_recouvrement"] },
     });
 
-    const payments = await Payment.find();
+    const result = await Invoice.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: "$amount" },
+        },
+      },
+    ]);
 
-    const totalRecovered = payments.reduce((sum, p) => sum + p.amount, 0);
+    const payments = await Payment.aggregate([
+      {
+        $group: {
+          _id: null,
+          paidAmount: { $sum: "$amount" },
+        },
+      },
+    ]);
+
+    const totalAmount = result[0]?.totalAmount || 0;
+    const paidAmount = payments[0]?.paidAmount || 0;
 
     res.json({
-      totalClients,
       totalInvoices,
-      paidInvoices,
       unpaidInvoices,
-      totalRecovered,
+      totalAmount,
+      paidAmount,
+      remainingAmount: totalAmount - paidAmount,
     });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    next(err);
   }
 };

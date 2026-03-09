@@ -1,16 +1,40 @@
 const express = require("express");
 const router = express.Router();
-const Client = require("../models/Client");
+const Joi = require("joi");
+const {
+  createClient,
+  getClients,
+  getClientById,
+  updateClient,
+  deleteClient,
+} = require("../controllers/clientController");
+const { protect, authorize } = require("../middleware/authMiddleware");
+const validationMiddleware = require("../middleware/validationMiddleware");
 
-router.post("/", async (req, res) => {
-  const client = new Client(req.body);
-  await client.save();
-  res.json(client);
+const clientSchema = Joi.object({
+  name: Joi.string().required(),
+  email: Joi.string().email().optional().allow(null, ""),
+  phone: Joi.string().optional().allow(null, ""),
+  address: Joi.string().optional().allow(null, ""),
+  status: Joi.string().valid("actif", "inactif").optional(),
 });
 
-router.get("/", async (req, res) => {
-  const clients = await Client.find();
-  res.json(clients);
-});
+router.use(protect);
+
+router.get("/", getClients);
+router.get("/:id", getClientById);
+router.post(
+  "/",
+  authorize("agent", "manager", "admin"),
+  validationMiddleware(clientSchema),
+  createClient
+);
+router.put(
+  "/:id",
+  authorize("agent", "manager", "admin"),
+  validationMiddleware(clientSchema),
+  updateClient
+);
+router.delete("/:id", authorize("manager", "admin"), deleteClient);
 
 module.exports = router;
