@@ -1,0 +1,128 @@
+### ─────────────────────────────────────
+### VARIABLES
+### ─────────────────────────────────────
+
+@baseUrl = http://localhost:5000/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YWY0NzAyNDg1NGRkYzNhZGY5NWE4OSIsInJvbGUiOiJhZ2VudCIsImlhdCI6MTc3MzA5NDY2NywiZXhwIjoxNzczNjk5NDY3fQ.U-YtRyZMU68rhAvlbHspBwuYcWkVUcoSyExm6SpppvI
+@clientId = REPLACE_WITH_CLIENT_ID
+@invoiceId = REPLACE_WITH_INVOICE_ID
+@paymentId = REPLACE_WITH_PAYMENT_ID
+
+
+### ─────────────────────────────────────
+### CLIENTS
+### ─────────────────────────────────────
+
+### Create client
+POST {{baseUrl}}/clients
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Acme Corp",
+  "email": "contact@acme.com",
+  "phone": "0600000000",
+  "address": "123 Rue de Paris"
+}
+
+###
+
+### Get all clients
+GET {{baseUrl}}/clients
+Authorization: Bearer {{token}}
+
+###
+
+### Get client by ID
+GET {{baseUrl}}/clients/{{clientId}}
+Authorization: Bearer {{token}}
+
+###
+
+### Update client
+PUT {{baseUrl}}/clients/{{clientId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Acme Corp Updated",
+  "phone": "0611111111"
+}
+
+###
+
+### Delete client
+DELETE {{baseUrl}}/clients/{{clientId}}
+Authorization: Bearer {{token}}
+
+
+### ─────────────────────────────────────
+### INVOICES
+### ─────────────────────────────────────
+
+### Create invoice
+POST {{baseUrl}}/invoices
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "client": "{{clientId}}",
+  "amount": 1500.00,
+  "dueDate": "2026-04-01",
+  "description": "Prestation de service - Mars 2026"
+}
+
+###
+
+### Get all invoices
+GET {{baseUrl}}/invoices
+Authorization: Bearer {{token}}
+
+###
+
+### Get invoice by ID
+GET {{baseUrl}}/invoices/{{invoiceId}}
+Authorization: Bearer {{token}}
+
+###
+
+### Update invoice status (manager/admin only)
+PATCH {{baseUrl}}/invoices/{{invoiceId}}/status
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "en_attente"
+}
+
+
+### ─────────────────────────────────────
+### PAYMENTS
+### ─────────────────────────────────────
+
+### Create payment
+POST {{baseUrl}}/payments
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "invoice": "{{invoiceId}}",
+  "amount": 750.00,
+  "method": "virement",
+  "note": "Premier versement"
+}
+
+###
+
+### Get all payments
+GET {{baseUrl}}/payments
+Authorization: Bearer {{token}}
+
+
+### ─────────────────────────────────────
+### STATS
+### ─────────────────────────────────────
+
+### Get dashboard stats
+GET {{baseUrl}}/stats
+Authorization: Bearer {{token}}
