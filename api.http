@@ -4,7 +4,7 @@
 
 @baseUrl = http://localhost:5000/api
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YWY0NzAyNDg1NGRkYzNhZGY5NWE4OSIsInJvbGUiOiJhZ2VudCIsImlhdCI6MTc3MzA5NDY2NywiZXhwIjoxNzczNjk5NDY3fQ.U-YtRyZMU68rhAvlbHspBwuYcWkVUcoSyExm6SpppvI
-@clientId = REPLACE_WITH_CLIENT_ID
+@clientId = 69af47924854ddc3adf95a8f
 @invoiceId = REPLACE_WITH_INVOICE_ID
 @paymentId = REPLACE_WITH_PAYMENT_ID
 
